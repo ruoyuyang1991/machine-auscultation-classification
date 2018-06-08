@@ -1,0 +1,34 @@
+clc
+clear all;
+close all;
+[x,sr]=audioread('0.005_133_0.006_1.wav');  
+ee=x(1:1755);
+r=fft(ee,1024);
+r1=abs(r);
+pinlv=(0:1:255)*8000/512;
+yuanlai=20*log10(r1);
+signal(1:256)=yuanlai(1:256);
+[h1,f1]=freqz([1,-0.98],[1],256,4000);
+pha=angle(h1);
+H1=abs(h1);
+r2(1:256)=r(1:256);
+u=r2.*h1';
+u2=abs(u);
+u3=20*log10(u2);
+un=filter([1,-0.98],[1],ee);
+
+figure(1);subplot(2,1,1);
+plot(f1,H1);title('High-pass filter amplitude-frequency characteristic');
+xlabel('Frequency/Hz');ylabel('amplitude');
+subplot(2,1,2);plot(pha);title('Phase frequency characteristics of high-pass filter');
+xlabel('Frequency/Hz');ylabel('angle/rad');
+figure(2);subplot(2,1,1);plot(ee);title('intinal sound signal');
+%axis([0 256 -3*10^4 2*10^4]);
+xlabel('sample points');ylabel('amplitude');
+subplot(2,1,2);plot(un);title('sound sinal after high-pass filters');
+%axis([0 256 -1*10^4 1*10^4]);
+xlabel('sample points');ylabel('amplitude');
+figure(3);subplot(2,1,1);plot(pinlv,signal);title('original speech signal spectrum');
+xlabel('Frequency/Hz');ylabel('amplitude/dB');
+subplot(2,1,2);plot(pinlv,u3);title('speech signal spectrum after high pass filters');
+xlabel('Frequency/Hz');ylabel('amplitude/dB');
